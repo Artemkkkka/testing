@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}
+  {% if '/edit/' in request.path %}
+    Редактирование статуса заказа
+  {% elif "/delete/" in request.path %}
+    Удаление заказа
+  {% else %}
+    Добавление заказа
+  {% endif %}
+{% endblock %}
+{% block content %}
+  <div class="col d-flex justify-content-center">
+    <div class="card" style="width: 40rem;">
+      <div class="card-header">
+        {% if '/edit/' in request.path %}
+          Редактирование статуса заказа
+        {% elif '/delete/' in request.path %}
+          Удаление заказа
+        {% else %}
+          Добавление заказа
+        {% endif %}
+      </div>
+      <div class="card-body">
+          {% if '/change_status/' in request.path %}
+            <h1>Изменить статус заказа #{{ order.id }}</h1>
+            <form method="post">
+                {% csrf_token %}
+                <label for="status">Статус:</label>
+                <select name="status" id="status">
+                    <option value="waiting" {% if order.status == 'waiting' %}selected{% endif %}>В ожидании</option>
+                    <option value="ready" {% if order.status == 'ready' %}selected{% endif %}>Готово</option>
+                    <option value="paid" {% if order.status == 'paid' %}selected{% endif %}>Оплачено</option>
+                </select>
+                <button type="submit">Изменить статус</button>
+            </form>
+            <a href="{% url 'order:list' %}" class="action-link">Назад к заказам</a>
+          {% elif '/delete/' in request.path %}
+            <form method="post">
+              {% csrf_token %}
+              <article>
+                Точно удалить заказ?
+              </article>
+              {% bootstrap_button button_type="submit" content="Отправить" %}
+            </form>
+          {% else %}
+            <form method="post">
+              {% csrf_token %}
+              {% bootstrap_form form %}
+              {% bootstrap_button button_type="submit" content="Отправить" %}
+            </form>
+          {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

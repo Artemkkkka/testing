@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}
+    Общая выручка
+{% endblock %}
+{% block content %}
+    <h1>Общая выручка</h1>
+    <p>Всего выручка за смену: {{ total_revenue }} руб.</p>
+    <a href="{% url 'order:list' %}" class="action-link">Назад к заказам</a>
+{% endblock %}

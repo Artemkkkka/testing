@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}
+    Все заказы
+{% endblock %}
+{% block content %}
+    {% if not orders %}
+    <div class="action-links">
+        <a href="{% url 'order:add' %}" class="action-link">Самое время сделать заказ!</a>
+    </div>
+    {% else %}
+    <h1>
+        {% if query %}
+            Заказы по "{{ query }}"
+        {% else %}
+            Все заказы
+        {% endif %}
+    </h1>
+    <div class="search-container">
+        <form method="get" action="{% url 'order:search_redirect' %}">
+            <input type="text" name="q" placeholder="Поиск по номеру стола или статусу">
+            <button type="submit">Искать</button>
+        </form>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Номер стола</th>
+                <th>Список блюд</th>
+                <th>Общая стоимость</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.table_number }}</td>
+                <td>
+                    <ul>
+                        {% for dish in order.dishes.all %}
+                        <li>{{ dish.name }} - {{ dish.price }} руб.</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td>{{ order.total_price }} руб.</td>
+                <td>{{ order.get_status_display }}</td>
+                <td>
+                    <a href="{% url 'order:change_status' order.id %}">Изменить статус</a> |
+                    <a href="{% url 'order:delete' order.id %}">Удалить</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="action-links">
+        <a href="{% url 'order:add' %}" class="action-link">Добавить заказ</a>
+        {% if query %}
+            <a href="{% url 'order:list' %}" class="action-link">Вернуться ко всем заказам</a>
+        {% endif %}
+        <a href="{% url 'order:calculate_revenue' %}" class="action-link">Общая выручка за смену</a>
+    </div>
+    {% endif %}
+{% endblock %}
